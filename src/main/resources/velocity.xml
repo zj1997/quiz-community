@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="velocityConfig"
+          class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="resourceLoaderPath" value="/templates/" />
+        <property name="configLocation" value="classpath:velocity.properties" />
+    </bean>
+
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+        <property name="cache" value="false"/>
+        <property name="prefix" value="/templates/"/><!-- 视图前缀 文件路径 -->
+        <property name="suffix" value=".html"/><!-- 视图后缀 -->
+        <property name="numberToolAttribute" value="number"/><!-- 数字函数名称 -->
+        <property name="dateToolAttribute" value="date"/><!-- 日期函数名称 -->
+        <property name="contentType" value="text/html;charset=UTF-8"/>
+        <property name="exposeSpringMacroHelpers" value="true"/><!-- 是否使用spring对宏定义对支持 -->
+        <property name="exposeRequestAttributes" value="true"/><!-- 是否开放request属性 -->
+        <property name="requestContextAttribute" value="rc"/><!-- request属性引用名称 -->
+        <!--<property name="toolboxConfigLocation" value="tools.xml"/>-->
+    </bean>
+
+</beans>

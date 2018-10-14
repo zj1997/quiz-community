@@ -1,5 +1,6 @@
 package com.zj.quiz_community.utils;
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +10,32 @@ import java.security.MessageDigest;
  * Created by nowcoder on 2016/7/3.
  */
 public class MyUtil {
+
     private static final Logger logger = LoggerFactory.getLogger(MyUtil.class);
+
+    public static final int ANONYMOUS_USERID = 3;
+
+    public static String getJsonObject(Integer code,String msg){
+
+        JSONObject json = new JSONObject();
+
+        json.put("code",code);
+        json.put("msg",msg);
+
+        return json.toJSONString();
+    }
+
+    public static String getJsonObject(Integer code){
+
+        JSONObject json = new JSONObject();
+
+        json.put("code",code);
+
+        return json.toJSONString();
+    }
+
+
+
 
     public static String MD5(String key) {
         char hexDigits[] = {

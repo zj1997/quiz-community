@@ -28,6 +28,11 @@ public class UserServiceImpl implements UserService {
     private LoginTicketDao loginTicketDao;
 
     @Override
+    public User selectByName(String Name) {
+        return dao.selectByName(Name);
+    }
+
+    @Override
     public User selectById(Integer id) {
        return dao.selectById(id);
     }

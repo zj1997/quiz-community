@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
@@ -24,61 +25,33 @@ import java.util.Map;
 @Controller
 public class LoginController {
 
-    private final Logger log = LoggerFactory.getLogger(LoggerFactory.class);
+    private final Logger log = LoggerFactory.getLogger(LoginController.class);
 
      @Autowired
      private UserService userService;
 
 
-    @RequestMapping(value = "/reg/" ,method = RequestMethod.POST)
-    public String register(Model model,
-                           @RequestParam("username") String username,
-                           @RequestParam("password") String password,
-                           @RequestParam(value = "next",required = false) String next,
-                           HttpServletResponse response){
-
-
-        Map<String, String> map = userService.register(username, password);
-
-
-        try {
-
-            if(map.containsKey("ticket")){
-
-                Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
-                cookie.setPath("/");
-                response.addCookie(cookie);
-
-                if(!StringUtils.isEmpty(next)){
-                    return "redirect:"+next;
-                }
-
-                return "redirect:/";
-            }else{
-                model.addAttribute("msg",map.get("msg"));
-                return "login";
-            }
-
-
-        }catch (Exception e){
-
-            log.error("注册异常！"+e.getMessage());
-             model.addAttribute("msg","服务器错误");
-             return "login";
-        }
-    }
-
-
-
-    @RequestMapping(value = "/login/" ,method = RequestMethod.POST)
+    @RequestMapping(value = {"/login/","/reg/"} ,method = RequestMethod.POST)
     public String login(Model model,
-                           @RequestParam("username") String username,
-                           @RequestParam("password") String password,
-                           @RequestParam(value = "next",required = false) String next,
-                           HttpServletResponse response){
+                        @RequestParam("username") String username,
+                        @RequestParam("password") String password,
+                        @RequestParam(value = "next",required = false) String next,
+                        @RequestParam(value = "rememberme",required = false) boolean rememberme,
+                        HttpServletResponse response,
+                        HttpServletRequest request){
 
+        Map<String, String> map = null;
 
-        Map<String, String> map = userService.login(username, password);
+        if(request.getRequestURL().toString().contains("/login/")){
+            //执行登录
+          map = userService.login(username, password);
+
+        }else if(request.getRequestURL().toString().contains("/reg/")){
+           //执行注册
+          map = userService.register(username, password);
+
+        }
+
 
         try {
 
@@ -86,6 +59,11 @@ public class LoginController {
 
                 Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
                 cookie.setPath("/");
+
+                if(rememberme){
+                    cookie.setMaxAge(3600*24*7);
+                }
+
                 response.addCookie(cookie);
 
                 if(!StringUtils.isEmpty(next)){
@@ -102,7 +80,7 @@ public class LoginController {
 
         }catch (Exception e){
 
-            log.error("注册异常！"+e.getMessage());
+            log.error("操作异常！"+e.getMessage());
             model.addAttribute("msg","服务器错误");
             return "login";
         }
@@ -112,7 +90,7 @@ public class LoginController {
 
 
     @RequestMapping(value = "/reglogin", method=RequestMethod.GET)
-    public String regLoginPage(@RequestParam("next") String next,Model model){
+    public String regLoginPage(@RequestParam(value = "next",required = false) String next,Model model){
         model.addAttribute("next",next);
         return "login";
     }

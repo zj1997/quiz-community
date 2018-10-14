@@ -2,6 +2,7 @@ package com.zj.quiz_community.service;
 
 
 import com.zj.quiz_community.pojo.Question;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,4 +14,9 @@ public interface QuestionService {
 
     List<Question> getLatestQuestion(Integer userId, Integer offset, Integer limit);
 
+    int addQuestion(Question question);
+
+    Question getQuestionById(Integer id);
+
+    int updateCommentCount(Integer userId, Integer comment_count);
 }

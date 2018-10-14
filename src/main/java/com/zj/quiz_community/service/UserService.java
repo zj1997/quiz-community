@@ -11,6 +11,8 @@ import java.util.Map;
  */
 public interface UserService {
 
+    User selectByName(String Name);
+
     User selectById(Integer id);
 
     Map<String,String> register(String username, String password);

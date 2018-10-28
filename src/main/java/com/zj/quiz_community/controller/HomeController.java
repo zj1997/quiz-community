@@ -1,11 +1,15 @@
 package com.zj.quiz_community.controller;
 
 
+import com.zj.quiz_community.dto.HostHolder;
 import com.zj.quiz_community.dto.ViewObject;
+import com.zj.quiz_community.pojo.EntityType;
 import com.zj.quiz_community.pojo.Question;
 import com.zj.quiz_community.pojo.User;
+import com.zj.quiz_community.service.CommentService;
 import com.zj.quiz_community.service.QuestionService;
 import com.zj.quiz_community.service.UserService;
+import com.zj.quiz_community.service.impl.followService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,14 @@ public class HomeController {
   @Autowired
   private QuestionService questionService;
 
+  @Autowired
+   private followService followService;
+
+  @Autowired
+  private  HostHolder hostHolder;
+
+  @Autowired
+  private CommentService commentService;
 
    public List<ViewObject> getQuestions(Integer userId, Integer offset, Integer limit){
 
@@ -45,6 +57,8 @@ public class HomeController {
           ViewObject vo = new ViewObject();
 
           vo.set("question",question);
+
+          vo.set("followCount",followService.getFollowerCount(EntityType.ENTITY_QUESTION,question.getId()));
 
           User user = userService.selectById(question.getUserId());
 
@@ -70,7 +84,20 @@ public class HomeController {
 
        List<ViewObject> userQuestion = getQuestions(userId, 0, 10);
        model.addAttribute("vos",userQuestion);
-       return "index";
+       User user = userService.selectById(userId);
+       ViewObject vo = new ViewObject();
+
+       vo.set("user",user);
+       vo.set("followerCount",followService.getFollowerCount(EntityType.ENTITY_USER,userId));
+       vo.set("followeeCount", followService.getFolloweeCount(userId, EntityType.ENTITY_USER));
+       vo.set("commentCount",commentService.getCountByUserId(userId));
+       if (hostHolder.getUser() != null) {
+           vo.set("followed", followService.isFollower(hostHolder.getUser().getId(), EntityType.ENTITY_USER, userId));
+       } else {
+           vo.set("followed", false);
+       }
+       model.addAttribute("profileUser", vo);
+       return "profile";
    }
 
 }

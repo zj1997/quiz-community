@@ -20,5 +20,8 @@ public interface CommentService {
 
     Integer getCommentCount(Integer entityId,Integer entityType);
 
+    Comment getCommentById(Integer commentId);
+
+    Integer getCountByUserId(Integer userId);
 
 }

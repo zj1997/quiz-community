@@ -5,9 +5,12 @@ import com.zj.quiz_community.dto.ViewObject;
 import com.zj.quiz_community.pojo.Comment;
 import com.zj.quiz_community.pojo.EntityType;
 import com.zj.quiz_community.pojo.Question;
+import com.zj.quiz_community.pojo.User;
 import com.zj.quiz_community.service.CommentService;
 import com.zj.quiz_community.service.QuestionService;
 import com.zj.quiz_community.service.UserService;
+import com.zj.quiz_community.service.impl.LikeOrDislikeService;
+import com.zj.quiz_community.service.impl.followService;
 import com.zj.quiz_community.utils.MyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,12 @@ public class QuestionController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LikeOrDislikeService likeOrDislikeService;
+
+    @Autowired
+    private followService followService;
 
     @RequestMapping(value = "/question/add",method = RequestMethod.POST)
     @ResponseBody
@@ -79,7 +88,7 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "/question/{qid}",method = RequestMethod.GET)
-    public String addQuestion(Model model , @PathVariable("qid") Integer qid){
+    public String questionDetail(Model model , @PathVariable("qid") Integer qid){
 
         Question question = questionService.getQuestionById(qid);
 
@@ -93,12 +102,54 @@ public class QuestionController {
 
             ViewObject vo = new ViewObject();
             vo.set("comment",comment);
+            if(hostHolder.getUser()==null){
+                vo.set("liked",0);
+            }else{
+                vo.set("liked",likeOrDislikeService.likeStatus(hostHolder.getUser().getId(),EntityType.ENTITY_COMMENT,comment.getId()));
+            }
+
+            vo.set("likeCount",likeOrDislikeService.getLikeCount(EntityType.ENTITY_COMMENT,comment.getId()));
+
             vo.set("user",userService.selectById(comment.getUserId()));
 
             vos.add(vo);
         }
 
         model.addAttribute("comments",vos);
+
+        //获取关注的用户信息
+        List<Integer> users = followService.getfollowers(EntityType.ENTITY_QUESTION, qid, 20);
+
+        if(users!=null){
+            List<ViewObject> followerUsers = new ArrayList<>();
+
+            for(Integer userId:users){
+
+                ViewObject vo = new ViewObject();
+
+                User user = userService.selectById(userId);
+
+                if(user==null){
+                    continue;
+                }
+
+                vo.set("name",user.getName());
+                vo.set("headUrl",user.getHeadUrl());
+                vo.set("id",user.getId());
+
+                followerUsers.add(vo);
+            }
+
+            model.addAttribute("followUsers",followerUsers);
+        }
+
+
+
+        if(hostHolder.getUser()!=null){
+            model.addAttribute("followed",followService.isFollower(hostHolder.getUser().getId(),EntityType.ENTITY_QUESTION,qid));
+        }else {
+            model.addAttribute("followed",false);
+        }
 
         return "detail";
     }

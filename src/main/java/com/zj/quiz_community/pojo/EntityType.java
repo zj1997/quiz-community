@@ -8,5 +8,6 @@ public class EntityType {
 
     public  static final Integer ENTITY_QUESTION = 1;
     public  static final Integer ENTITY_COMMENT=2;
+    public  static final Integer ENTITY_USER=3;
 
 }

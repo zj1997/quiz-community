@@ -38,4 +38,14 @@ public class CommentServiceImpl implements CommentService {
     public Integer getCommentCount(Integer entityId, Integer entityType) {
         return commentDao.getCommentCount(entityId,entityType);
     }
+
+    @Override
+    public Comment getCommentById(Integer commentId) {
+        return commentDao.getById(commentId);
+    }
+
+    @Override
+    public Integer getCountByUserId(Integer userId) {
+        return commentDao.getCountByUserId(userId);
+    }
 }

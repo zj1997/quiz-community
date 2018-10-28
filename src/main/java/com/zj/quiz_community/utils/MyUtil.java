@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
+import java.util.Map;
 
 /**
  * Created by nowcoder on 2016/7/3.
@@ -14,6 +15,7 @@ public class MyUtil {
     private static final Logger logger = LoggerFactory.getLogger(MyUtil.class);
 
     public static final int ANONYMOUS_USERID = 3;
+    public static final int SYSTEM_USERID = 4;
 
     public static String getJsonObject(Integer code,String msg){
 
@@ -34,6 +36,18 @@ public class MyUtil {
         return json.toJSONString();
     }
 
+    public static String getJsonObject(Integer code, Map<String,Object> map){
+
+        JSONObject json = new JSONObject();
+
+        json.put("code",code);
+
+        for (Map.Entry<String,Object> entry : map.entrySet()){
+            json.put(entry.getKey(),entry.getValue());
+        }
+
+        return json.toJSONString();
+    }
 
 
 

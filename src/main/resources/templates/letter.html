@@ -10,22 +10,20 @@
                 <div class="letter-info">
                 <span class="l-time">$date.format('yyyy-MM-dd HH:mm:ss', $conversation.conversation.createdDate)</span>
                 <div class="l-operate-bar">
-                <a href="/msg/delete?conversationId=$conversation.conversation.conversationId" >
-                    <!--<div class="delete1">删除</div>-->
-                    删除
+
+                <a href="/msg/delete?conversationId=$conversation.conversation.conversationId" class="sns-action-del" data-id="10001_622873">
+                删除
                 </a>
-                <a href="/msg/detail?conversationId=$conversation.conversation.conversationId" style="color:red;">
-                    共$conversation.conversation.id条聊天记录
+
+                <a href="/msg/detail?conversationId=$conversation.conversation.conversationId">
+                        共有$conversation.conversation.id条消息
                 </a>
                 </div>
                 </div>
                 <div class="chat-headbox">
-                #if($conversation.unread!=0)
                 <span class="msg-num">
                 $conversation.unread
                 </span>
-                #else
-                #end
                 <a class="list-head">
                 <img alt="头像" src="$conversation.user.headUrl">
                 </a>
